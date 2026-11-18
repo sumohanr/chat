@@ -1,14 +1,13 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cisco Webex Contact Center Live Chat</title>
+    <title>Cisco Webex Contact Center LiveChat Demo</title>
 </head>
 <body>
 
-    <!-- Cisco LiveChat Widget Container -->
+    <!-- Cisco Webex Contact Center LiveChat widget container -->
     <div
         id="divicw"
         data-bind="2ED3426B-004B-4398-BF1A-3236C885F309"
@@ -17,78 +16,79 @@
     </div>
 
     <script>
-        var i = {
-
-            // Initialize LiveChat
-            t: function () {
+        const liveChat = {
+            // Load the Cisco LiveChat initialization script.
+            initialize: function () {
                 try {
-                    var e = document.getElementById("divicw");
-                    var t = document.createElement("script");
+                    const container = document.getElementById("divicw");
+                    const script = document.createElement("script");
 
-                    t.src =
-                        "https://chat-widget.produs1.ciscoccservice.com/js/imichatinit.js?t="
-                        + new Date().toISOString();
+                    script.src =
+                        "https://chat-widget.produs1.ciscoccservice.com/js/imichatinit.js?t=" +
+                        new Date().toISOString();
 
-                    e.insertAdjacentElement("afterend", t);
+                    container.insertAdjacentElement("afterend", script);
 
-                    t.addEventListener("load", function () {
+                    script.addEventListener("load", function () {
                         console.log(
                             new Date().toISOString(),
-                            "Livechat script loaded successfully!"
+                            "LiveChat script loaded successfully."
                         );
                     });
 
-                    t.addEventListener("error", function () {
-                        console.log(
+                    script.addEventListener("error", function () {
+                        console.error(
                             new Date().toISOString(),
-                            "Error loading Livechat script"
+                            "Error loading the LiveChat script."
                         );
-
-                        i.o(e);
+                        liveChat.showUnsupportedBrowserMessage(container);
                     });
-
-                } catch (e) {
-                    console.error(e);
+                } catch (error) {
+                    console.error("LiveChat initialization error:", error);
                 }
             },
 
-            // Unsupported Browser Fallback
-            o: function (e) {
+            // Display the fallback message if the external script cannot load.
+            showUnsupportedBrowserMessage: function (container) {
+                // Avoid creating duplicate fallback iframes.
+                if (document.getElementById("tls_al_frm")) {
+                    return;
+                }
 
-                e.insertAdjacentHTML(
+                container.insertAdjacentHTML(
                     "afterend",
-                    '<iframe id="tls_al_frm" frameborder="0" ' +
-                    'style="overflow:hidden;height:208px;width:394px;' +
-                    'position:fixed;display:block;right:48px;bottom:12px;' +
-                    'z-index:99999;display:none;"></iframe>'
+                    '<iframe id="tls_al_frm" title="LiveChat browser compatibility message" ' +
+                    'frameborder="0" style="overflow:hidden;height:208px;width:394px;' +
+                    'position:fixed;right:48px;bottom:12px;z-index:99999;display:none;"></iframe>'
                 );
 
-                var t = document.getElementById("tls_al_frm");
-                var n = t.contentWindow;
-                var d = n.document;
+                const frame = document.getElementById("tls_al_frm");
+                const frameDocument = frame.contentWindow.document;
 
-                d.open();
-
-                d.write(`
+                frameDocument.open();
+                frameDocument.write(`
                     <!DOCTYPE html>
-                    <html>
+                    <html lang="en">
                     <head>
                         <meta charset="UTF-8">
+                        <meta name="viewport" content="width=device-width, initial-scale=1.0">
                         <title>Unsupported Browser</title>
-
                         <style>
                             body {
-                                font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+                                font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
                                 color: #99a0b0;
                                 font-size: 14px;
+                                margin: 0;
                             }
 
                             .popover__content {
+                                box-sizing: border-box;
                                 background-color: #fbfbfe;
                                 padding: 1.5rem;
                                 border-radius: 5px;
-                                width: 300px;
-                                box-shadow: 0 2px 5px 0 rgba(0,0,0,0.26);
+                                width: 100%;
+                                min-height: 208px;
+                                box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.26);
                                 position: relative;
                             }
 
@@ -98,17 +98,13 @@
                                 font-size: 16px;
                             }
 
-                            .pull-left {
-                                float: left;
+                            .hdr-txt {
+                                width: 218px;
+                                margin-top: 3px;
                             }
 
                             .clearfix {
                                 clear: both;
-                            }
-
-                            .hdr-txt {
-                                width: 218px;
-                                margin-top: 3px;
                             }
 
                             .para-txt a {
@@ -130,16 +126,14 @@
                             }
                         </style>
                     </head>
-
                     <body>
                         <div class="popover__content">
-
                             <div class="close-btn">
-                                <a href="#" onclick="closeTLSAlert()">X</a>
+                                <a href="#" onclick="closeTLSAlert(); return false;" aria-label="Close">X</a>
                             </div>
 
                             <div class="popover__message">
-                                <div class="pull-left hdr-txt">
+                                <div class="hdr-txt">
                                     This browser version is not supported on LiveChat.
                                 </div>
                             </div>
@@ -150,47 +144,47 @@
                                 Please update your browser to the latest version
                                 and re-open the website to access the widget.
                             </p>
-
                         </div>
 
                         <script>
                             function closeTLSAlert() {
                                 window.parent.postMessage({
-                                    key: 'close_tls_alert',
-                                    value: 'close_tls_alert',
-                                    action: 'close_tls_alert'
-                                }, '*');
+                                    key: "close_tls_alert",
+                                    value: "close_tls_alert",
+                                    action: "close_tls_alert"
+                                }, "*");
                             }
                         <\/script>
-
                     </body>
                     </html>
                 `);
+                frameDocument.close();
 
-                d.close();
+                frame.style.display = "block";
 
-                t.style.display = 'block';
-
-                window.addEventListener('message', function (e) {
-                    if (e.data.action === 'close_tls_alert') {
-                        i.s();
+                // Listen only for the close message from this fallback iframe.
+                window.addEventListener("message", function (event) {
+                    if (
+                        event.source === frame.contentWindow &&
+                        event.data &&
+                        event.data.action === "close_tls_alert"
+                    ) {
+                        liveChat.removeFallbackMessage();
                     }
-                });
+                }, { once: true });
             },
 
-            // Remove Fallback Alert
-            s: function () {
-                var e = document.getElementById('tls_al_frm');
-
-                if (e) {
-                    e.remove();
+            // Remove the fallback iframe.
+            removeFallbackMessage: function () {
+                const frame = document.getElementById("tls_al_frm");
+                if (frame) {
+                    frame.remove();
                 }
             }
         };
 
-        // Start LiveChat
-        i.t();
-
+        // Start the LiveChat integration.
+        liveChat.initialize();
     </script>
 
 </body>
